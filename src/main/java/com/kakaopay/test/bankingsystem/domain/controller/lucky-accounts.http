@@ -9,12 +9,21 @@ Content-Type: application/json
   "withdrawLimit": "4"
 }
 
-### get
-GET localhost:8080/lucky-accounts
+### withdraw
+GET localhost:8080/lucky-accounts/withdraw
 Content-Type: application/json
 
 {
-  "token": "836",
+  "token": "f7f",
   "roomId": "kiworkshop",
   "userId": "6"
+}
+
+### lookup
+GET localhost:8080/lucky-accounts/lookup
+Content-Type: application/json
+
+{
+  "token": "f7f",
+  "userId": "1"
 }

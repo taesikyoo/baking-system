@@ -2,10 +2,12 @@ package com.kakaopay.test.bankingsystem.domain.service;
 
 import com.kakaopay.test.bankingsystem.domain.dto.AccountCreateRequest;
 import com.kakaopay.test.bankingsystem.domain.dto.LuckyAccountCreateRequest;
+import com.kakaopay.test.bankingsystem.domain.dto.LuckyAccountLookupRequest;
 import com.kakaopay.test.bankingsystem.domain.dto.LuckyAccountWithdrawRequest;
 import com.kakaopay.test.bankingsystem.domain.entity.Account;
 import com.kakaopay.test.bankingsystem.domain.entity.Transaction;
 import com.kakaopay.test.bankingsystem.domain.entity.TransactionStatus;
+import com.kakaopay.test.bankingsystem.domain.exception.LookupRuleViolationException;
 import com.kakaopay.test.bankingsystem.domain.exception.WithdrawFailureException;
 import com.kakaopay.test.bankingsystem.domain.exception.WithdrawRuleViolationException;
 import com.kakaopay.test.bankingsystem.utility.TokenGenerator;
@@ -15,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -57,6 +60,7 @@ public class LuckyAccountService {
         Account account = accountService.findByToken(request.getToken());
         Long userId = request.getUserId();
         LocalDateTime requestedAt = LocalDateTime.now();
+
         if (!account.getRoomId().equals(request.getRoomId())) {
             throw new WithdrawRuleViolationException("일치하지 않는 방 번호입니다.");
         }
@@ -84,5 +88,24 @@ public class LuckyAccountService {
 
     private boolean hasTransactionAlready(LuckyAccountWithdrawRequest request, List<Transaction> transactions) {
         return transactions.stream().anyMatch(transaction -> request.getUserId().equals(transaction.getUserId()));
+    }
+
+    public List<Transaction> lookup(LuckyAccountLookupRequest request) {
+        String token = request.getToken();
+        Long userId = request.getUserId();
+        LocalDateTime requestedAt = LocalDateTime.now();
+        Account account = accountService.findByToken(token);
+
+        if (!account.getOwnerId().equals(userId)) {
+            throw new LookupRuleViolationException("뿌린 사람 자신만 조회할 수 있습니다.");
+        }
+        if (requestedAt.isAfter(account.getLookupExpiredAt())) {
+            throw new WithdrawRuleViolationException("조회기간이 만료되었습니다.");
+        }
+        List<Transaction> transactions = transactionService.findByAccount(account).stream()
+                .filter(transaction -> !transaction.getStatus().equals(TransactionStatus.WITHDRAW_STANDBY))
+                .collect(Collectors.toList());
+
+        return transactions;
     }
 }
