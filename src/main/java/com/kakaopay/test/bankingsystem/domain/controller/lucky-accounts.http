@@ -3,7 +3,7 @@ POST localhost:8080/lucky-accounts
 Content-Type: application/json
 
 {
-  "userId": "1",
+  "userId": "2",
   "roomId": "kiworkshop",
   "amount": "100000",
   "withdrawLimit": "4"
@@ -14,9 +14,9 @@ GET localhost:8080/lucky-accounts/withdraw
 Content-Type: application/json
 
 {
-  "token": "f7f",
+  "token": "3ea",
   "roomId": "kiworkshop",
-  "userId": "6"
+  "userId": "5"
 }
 
 ### lookup
@@ -24,6 +24,6 @@ GET localhost:8080/lucky-accounts/lookup
 Content-Type: application/json
 
 {
-  "token": "f7f",
-  "userId": "1"
+  "token": "c64",
+  "userId": "2"
 }

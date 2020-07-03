@@ -8,16 +8,16 @@ import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
-public class LuckyAccountLookupRequest {
+public class LuckyAccountCreateResponse {
 
     private String token;
-    private Long userId;
-    private LocalDateTime requestAt;
+    private Long ownerId;
+    private LocalDateTime createdAt;
 
     @Builder
-    public LuckyAccountLookupRequest(String token, Long userId, LocalDateTime requestAt) {
+    public LuckyAccountCreateResponse(String token, Long ownerId, LocalDateTime createdAt) {
         this.token = token;
-        this.userId = userId;
-        this.requestAt = requestAt;
+        this.ownerId = ownerId;
+        this.createdAt = createdAt;
     }
 }

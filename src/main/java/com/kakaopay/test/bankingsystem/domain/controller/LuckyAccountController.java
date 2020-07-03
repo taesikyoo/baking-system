@@ -1,14 +1,8 @@
 package com.kakaopay.test.bankingsystem.domain.controller;
 
-import com.kakaopay.test.bankingsystem.domain.dto.LuckyAccountCreateRequest;
-import com.kakaopay.test.bankingsystem.domain.dto.LuckyAccountLookupRequest;
-import com.kakaopay.test.bankingsystem.domain.dto.LuckyAccountWithdrawRequest;
-import com.kakaopay.test.bankingsystem.domain.entity.Account;
-import com.kakaopay.test.bankingsystem.domain.entity.Transaction;
+import com.kakaopay.test.bankingsystem.domain.dto.*;
 import com.kakaopay.test.bankingsystem.domain.service.LuckyAccountService;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 public class LuckyAccountController {
@@ -20,17 +14,17 @@ public class LuckyAccountController {
     }
 
     @PostMapping("/lucky-accounts")
-    public Account create(@RequestBody LuckyAccountCreateRequest request) {
+    public LuckyAccountCreateResponse create(@RequestBody LuckyAccountCreateRequest request) {
         return luckyAccountService.create(request);
     }
 
     @GetMapping("/lucky-accounts/withdraw")
-    public Transaction withdraw(@RequestBody LuckyAccountWithdrawRequest request) {
+    public LuckyAccountWithdrawResponse withdraw(@RequestBody LuckyAccountWithdrawRequest request) {
         return luckyAccountService.withdraw(request);
     }
 
     @GetMapping("/lucky-accounts/lookup")
-    public List<Transaction> lookup(@RequestBody LuckyAccountLookupRequest request) {
+    public LuckyAccountLookupResponse lookup(@RequestBody LuckyAccountLookupRequest request) {
         return luckyAccountService.lookup(request);
     }
 }

@@ -15,15 +15,15 @@ public class LuckyAccountCreateRequest {
     private String roomId;
     private long amount;
     private int withdrawLimit;
-    private LocalDateTime requestedAt;
+    private LocalDateTime requestAt;
 
     @Builder
-    public LuckyAccountCreateRequest(String token, Long userId, String roomId, long amount, int withdrawLimit, LocalDateTime requestedAt) {
+    public LuckyAccountCreateRequest(String token, Long userId, String roomId, long amount, int withdrawLimit, LocalDateTime requestAt) {
         this.token = token;
         this.userId = userId;
         this.roomId = roomId;
         this.amount = amount;
         this.withdrawLimit = withdrawLimit;
-        this.requestedAt = requestedAt;
+        this.requestAt = requestAt;
     }
 }

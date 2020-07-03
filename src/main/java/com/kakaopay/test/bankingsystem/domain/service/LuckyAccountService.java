@@ -1,9 +1,6 @@
 package com.kakaopay.test.bankingsystem.domain.service;
 
-import com.kakaopay.test.bankingsystem.domain.dto.AccountCreateRequest;
-import com.kakaopay.test.bankingsystem.domain.dto.LuckyAccountCreateRequest;
-import com.kakaopay.test.bankingsystem.domain.dto.LuckyAccountLookupRequest;
-import com.kakaopay.test.bankingsystem.domain.dto.LuckyAccountWithdrawRequest;
+import com.kakaopay.test.bankingsystem.domain.dto.*;
 import com.kakaopay.test.bankingsystem.domain.entity.Account;
 import com.kakaopay.test.bankingsystem.domain.entity.Transaction;
 import com.kakaopay.test.bankingsystem.domain.entity.TransactionStatus;
@@ -30,19 +27,19 @@ public class LuckyAccountService {
     private final TransactionService transactionService;
 
     @Transactional
-    public Account create(LuckyAccountCreateRequest request) {
+    public LuckyAccountCreateResponse create(LuckyAccountCreateRequest request) {
         Long userId = request.getUserId();
         long amount = request.getAmount();
         int withdrawLimit = request.getWithdrawLimit();
-        LocalDateTime requestedAt = LocalDateTime.now();
+        LocalDateTime requestAt = LocalDateTime.now();
 
         AccountCreateRequest accountCreatRequest = AccountCreateRequest.builder()
                 .token(TokenGenerator.generateToken())
                 .ownerId(userId)
                 .roomId(request.getRoomId())
-                .createdAt(requestedAt)
-                .withdrawExpiredAt(requestedAt.plusMinutes(LUCKY_ACCOUNT_WITHDRAW_EXPIRED_MINUTES))
-                .lookupExpiredAt(requestedAt.plusDays(LUCKY_ACCOUNT_WITHDRAW_EXPIRED_DAYS))
+                .createdAt(requestAt)
+                .withdrawExpiredAt(requestAt.plusMinutes(LUCKY_ACCOUNT_WITHDRAW_EXPIRED_MINUTES))
+                .lookupExpiredAt(requestAt.plusDays(LUCKY_ACCOUNT_WITHDRAW_EXPIRED_DAYS))
                 .build();
 
         Account account = accountService.create(accountCreatRequest);
@@ -52,19 +49,23 @@ public class LuckyAccountService {
             transactionService.withdrawStandby(account, amount / withdrawLimit);
         }
 
-        return account;
+        return LuckyAccountCreateResponse.builder()
+                .token(account.getToken())
+                .ownerId(account.getOwnerId())
+                .createdAt(LocalDateTime.now())
+                .build();
     }
 
     @Transactional
-    public Transaction withdraw(LuckyAccountWithdrawRequest request) {
+    public LuckyAccountWithdrawResponse withdraw(LuckyAccountWithdrawRequest request) {
         Account account = accountService.findByToken(request.getToken());
         Long userId = request.getUserId();
-        LocalDateTime requestedAt = LocalDateTime.now();
+        LocalDateTime requestAt = LocalDateTime.now();
 
         if (!account.getRoomId().equals(request.getRoomId())) {
             throw new WithdrawRuleViolationException("일치하지 않는 방 번호입니다.");
         }
-        if (requestedAt.isAfter(account.getWithdrawExpiredAt())) {
+        if (requestAt.isAfter(account.getWithdrawExpiredAt())) {
             throw new WithdrawRuleViolationException("뿌리기가 만료되었습니다.");
         }
         if (account.getOwnerId().equals(userId)) {
@@ -83,29 +84,55 @@ public class LuckyAccountService {
 
         withdrawStandby.toNextStatus(TransactionStatus.WITHDRAW_COMPLETED, userId);
 
-        return withdrawStandby;
+        return LuckyAccountWithdrawResponse.builder()
+                .id(withdrawStandby.getId())
+                .status(withdrawStandby.getStatus())
+                .amount(withdrawStandby.getAmount())
+                .createdAt(withdrawStandby.getCreatedAt())
+                .modifiedAt(withdrawStandby.getModifiedAt())
+                .build();
     }
 
     private boolean hasTransactionAlready(LuckyAccountWithdrawRequest request, List<Transaction> transactions) {
         return transactions.stream().anyMatch(transaction -> request.getUserId().equals(transaction.getUserId()));
     }
 
-    public List<Transaction> lookup(LuckyAccountLookupRequest request) {
+    public LuckyAccountLookupResponse lookup(LuckyAccountLookupRequest request) {
         String token = request.getToken();
         Long userId = request.getUserId();
-        LocalDateTime requestedAt = LocalDateTime.now();
+        LocalDateTime requestAt = LocalDateTime.now();
         Account account = accountService.findByToken(token);
 
         if (!account.getOwnerId().equals(userId)) {
             throw new LookupRuleViolationException("뿌린 사람 자신만 조회할 수 있습니다.");
         }
-        if (requestedAt.isAfter(account.getLookupExpiredAt())) {
+        if (requestAt.isAfter(account.getLookupExpiredAt())) {
             throw new WithdrawRuleViolationException("조회기간이 만료되었습니다.");
         }
-        List<Transaction> transactions = transactionService.findByAccount(account).stream()
-                .filter(transaction -> !transaction.getStatus().equals(TransactionStatus.WITHDRAW_STANDBY))
-                .collect(Collectors.toList());
 
-        return transactions;
+        Transaction depositCompleted = transactionService.findByAccount(account).stream()
+                .filter(transaction -> transaction.getStatus().equals(TransactionStatus.DEPOSIT_COMPLETED))
+                .collect(Collectors.toList()).get(0);
+        List<TransactionDTO> withdrawCompleted = transactionService.findByAccount(account).stream()
+                .filter(transaction -> transaction.getStatus().equals(TransactionStatus.WITHDRAW_COMPLETED))
+                .map(this::getTransactionDTO)
+                .collect(Collectors.toList());
+        long withdrawAmount = withdrawCompleted.stream()
+                .mapToLong(TransactionDTO::getAmount)
+                .sum();
+
+        return LuckyAccountLookupResponse.builder()
+                .createdAt(depositCompleted.getCreatedAt())
+                .depositedAmount(depositCompleted.getAmount())
+                .withdrawAmount(withdrawAmount)
+                .withdrawCompleted(withdrawCompleted)
+                .build();
+    }
+
+    private TransactionDTO getTransactionDTO(Transaction transaction) {
+        return TransactionDTO.builder()
+                .amount(transaction.getAmount())
+                .userId(transaction.getUserId())
+                .build();
     }
 }

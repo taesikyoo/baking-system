@@ -9,6 +9,7 @@ import com.kakaopay.test.bankingsystem.domain.exception.WithdrawFailureException
 import com.kakaopay.test.bankingsystem.domain.exception.WithdrawRuleViolationException;
 import com.kakaopay.test.bankingsystem.domain.repository.AccountRepository;
 import com.kakaopay.test.bankingsystem.domain.repository.TransactionRepository;
+import com.kakaopay.test.bankingsystem.utility.TokenGenerator;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,12 +44,12 @@ class LuckyAccountServiceTest {
     void create() {
         LocalDateTime now = LocalDateTime.now();
         LuckyAccountCreateRequest luckyAccountCreateRequest = LuckyAccountCreateRequest.builder()
-                .token("abc")
+                .token(TokenGenerator.generateToken())
                 .userId(1L)
                 .roomId("room")
                 .amount(100000)
                 .withdrawLimit(5)
-                .requestedAT(now)
+                .requestAt(now)
                 .build();
 
         luckyAccountService.create(luckyAccountCreateRequest);
@@ -74,7 +75,7 @@ class LuckyAccountServiceTest {
                 .roomId("room")
                 .amount(100000)
                 .withdrawLimit(5)
-                .requestedAT(now)
+                .requestAt(now)
                 .build();
         luckyAccountService.create(luckyAccountCreateRequest);
 
@@ -82,7 +83,7 @@ class LuckyAccountServiceTest {
                 .token("abc")
                 .roomId("room")
                 .userId(2L)
-                .requestedAt(now.plusMinutes(1))
+                .requestAt(now.plusMinutes(1))
                 .build();
 
         luckyAccountService.withdraw(luckyAccountWithdrawRequest);
@@ -106,7 +107,7 @@ class LuckyAccountServiceTest {
                 .roomId("room")
                 .amount(100000)
                 .withdrawLimit(5)
-                .requestedAT(now)
+                .requestAt(now)
                 .build();
         luckyAccountService.create(luckyAccountCreateRequest);
 
@@ -114,7 +115,7 @@ class LuckyAccountServiceTest {
                 .token("abc")
                 .roomId("room")
                 .userId(1L)
-                .requestedAt(now.plusMinutes(1))
+                .requestAt(now.plusMinutes(1))
                 .build();
 
         assertThatThrownBy(() -> luckyAccountService.withdraw(luckyAccountWithdrawRequest))
@@ -132,7 +133,7 @@ class LuckyAccountServiceTest {
                 .roomId("room")
                 .amount(100000)
                 .withdrawLimit(5)
-                .requestedAT(now)
+                .requestAt(now)
                 .build();
         luckyAccountService.create(luckyAccountCreateRequest);
 
@@ -140,7 +141,7 @@ class LuckyAccountServiceTest {
                 .token("abc")
                 .roomId("anotherRoom")
                 .userId(2L)
-                .requestedAt(now.plusMinutes(1))
+                .requestAt(now.plusMinutes(1))
                 .build();
 
         assertThatThrownBy(() -> luckyAccountService.withdraw(luckyAccountWithdrawRequest))
@@ -158,7 +159,7 @@ class LuckyAccountServiceTest {
                 .roomId("room")
                 .amount(100000)
                 .withdrawLimit(5)
-                .requestedAT(now)
+                .requestAt(now)
                 .build();
         luckyAccountService.create(luckyAccountCreateRequest);
 
@@ -166,7 +167,7 @@ class LuckyAccountServiceTest {
                 .token("abc")
                 .roomId("room")
                 .userId(2L)
-                .requestedAt(now.plusMinutes(11))
+                .requestAt(now.plusMinutes(11))
                 .build();
 
         assertThatThrownBy(() -> luckyAccountService.withdraw(luckyAccountWithdrawRequest))
@@ -184,7 +185,7 @@ class LuckyAccountServiceTest {
                 .roomId("room")
                 .amount(100000)
                 .withdrawLimit(5)
-                .requestedAT(now)
+                .requestAt(now)
                 .build();
         luckyAccountService.create(luckyAccountCreateRequest);
 
@@ -192,7 +193,7 @@ class LuckyAccountServiceTest {
                 .token("abc")
                 .roomId("room")
                 .userId(2L)
-                .requestedAt(now.plusMinutes(1))
+                .requestAt(now.plusMinutes(1))
                 .build();
 
         luckyAccountService.withdraw(luckyAccountWithdrawRequest);
@@ -212,7 +213,7 @@ class LuckyAccountServiceTest {
                 .roomId("room")
                 .amount(100000)
                 .withdrawLimit(2)
-                .requestedAT(now)
+                .requestAt(now)
                 .build();
         luckyAccountService.create(luckyAccountCreateRequest);
 
@@ -220,21 +221,21 @@ class LuckyAccountServiceTest {
                 .token("abc")
                 .roomId("room")
                 .userId(2L)
-                .requestedAt(now.plusMinutes(1))
+                .requestAt(now.plusMinutes(1))
                 .build();
 
         LuckyAccountWithdrawRequest luckyAccountWithdrawRequest2 = LuckyAccountWithdrawRequest.builder()
                 .token("abc")
                 .roomId("room")
                 .userId(3L)
-                .requestedAt(now.plusMinutes(1))
+                .requestAt(now.plusMinutes(1))
                 .build();
 
         LuckyAccountWithdrawRequest luckyAccountWithdrawRequest3 = LuckyAccountWithdrawRequest.builder()
                 .token("abc")
                 .roomId("room")
                 .userId(4L)
-                .requestedAt(now.plusMinutes(1))
+                .requestAt(now.plusMinutes(1))
                 .build();
 
         luckyAccountService.withdraw(luckyAccountWithdrawRequest1);
