@@ -1,5 +1,6 @@
 package com.kakaopay.test.bankingsystem.domain.service;
 
+import com.kakaopay.test.bankingsystem.domain.dto.AccountCreateRequest;
 import com.kakaopay.test.bankingsystem.domain.entity.Account;
 import com.kakaopay.test.bankingsystem.domain.exception.AccountNotFoundException;
 import com.kakaopay.test.bankingsystem.domain.repository.AccountRepository;

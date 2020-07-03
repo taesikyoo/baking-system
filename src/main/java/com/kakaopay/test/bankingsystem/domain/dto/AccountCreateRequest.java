@@ -1,4 +1,4 @@
-package com.kakaopay.test.bankingsystem.domain.service;
+package com.kakaopay.test.bankingsystem.domain.dto;
 
 import lombok.Builder;
 import lombok.Getter;

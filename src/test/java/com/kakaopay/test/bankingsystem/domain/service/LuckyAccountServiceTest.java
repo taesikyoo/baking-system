@@ -1,5 +1,7 @@
 package com.kakaopay.test.bankingsystem.domain.service;
 
+import com.kakaopay.test.bankingsystem.domain.dto.LuckyAccountCreateRequest;
+import com.kakaopay.test.bankingsystem.domain.dto.LuckyAccountWithdrawRequest;
 import com.kakaopay.test.bankingsystem.domain.entity.Account;
 import com.kakaopay.test.bankingsystem.domain.entity.Transaction;
 import com.kakaopay.test.bankingsystem.domain.entity.TransactionStatus;
@@ -19,7 +21,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class LuckyAccountServiceTest {

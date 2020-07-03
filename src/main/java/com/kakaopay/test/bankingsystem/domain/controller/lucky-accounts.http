@@ -1,0 +1,10 @@
+### create
+POST localhost:8080/lucky-accounts
+Content-Type: application/json
+
+{
+  "userId": "1",
+  "roomId": "kiworkshop",
+  "amount": "100000",
+  "withdrawLimit": "4"
+}

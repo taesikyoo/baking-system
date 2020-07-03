@@ -1,4 +1,4 @@
-package com.kakaopay.test.bankingsystem.domain.service;
+package com.kakaopay.test.bankingsystem.domain.dto;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -15,15 +15,15 @@ public class LuckyAccountCreateRequest {
     private String roomId;
     private long amount;
     private int withdrawLimit;
-    private LocalDateTime requestedAT;
+    private LocalDateTime requestedAt;
 
     @Builder
-    public LuckyAccountCreateRequest(String token, Long userId, String roomId, long amount, int withdrawLimit, LocalDateTime requestedAT) {
+    public LuckyAccountCreateRequest(String token, Long userId, String roomId, long amount, int withdrawLimit, LocalDateTime requestedAt) {
         this.token = token;
         this.userId = userId;
         this.roomId = roomId;
         this.amount = amount;
         this.withdrawLimit = withdrawLimit;
-        this.requestedAT = requestedAT;
+        this.requestedAt = requestedAt;
     }
 }
