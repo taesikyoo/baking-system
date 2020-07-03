@@ -8,6 +8,7 @@ import com.kakaopay.test.bankingsystem.domain.entity.Transaction;
 import com.kakaopay.test.bankingsystem.domain.entity.TransactionStatus;
 import com.kakaopay.test.bankingsystem.domain.exception.WithdrawFailureException;
 import com.kakaopay.test.bankingsystem.domain.exception.WithdrawRuleViolationException;
+import com.kakaopay.test.bankingsystem.utility.TokenGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,8 +34,7 @@ public class LuckyAccountService {
         LocalDateTime requestedAt = LocalDateTime.now();
 
         AccountCreateRequest accountCreatRequest = AccountCreateRequest.builder()
-                // TODO: 2020-07-01 token 만들기
-                .token("abc")
+                .token(TokenGenerator.generateToken())
                 .ownerId(userId)
                 .roomId(request.getRoomId())
                 .createdAt(requestedAt)
