@@ -8,10 +8,10 @@ import java.time.LocalDateTime;
 @Getter
 public class LuckyAccountWithdrawRequest {
 
-    private String token;
-    private String roomId;
-    private Long userId;
-    private LocalDateTime requestAt;
+    private final String token;
+    private final String roomId;
+    private final Long userId;
+    private final LocalDateTime requestAt;
 
     @Builder
     public LuckyAccountWithdrawRequest(String token, String roomId, Long userId, LocalDateTime requestAt) {

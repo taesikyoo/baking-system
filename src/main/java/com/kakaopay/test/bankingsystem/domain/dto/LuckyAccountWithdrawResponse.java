@@ -1,12 +1,10 @@
 package com.kakaopay.test.bankingsystem.domain.dto;
 
-import com.kakaopay.test.bankingsystem.domain.entity.Account;
 import com.kakaopay.test.bankingsystem.domain.entity.TransactionStatus;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Getter

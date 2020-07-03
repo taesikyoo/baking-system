@@ -15,7 +15,7 @@ public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(unique = true, length =3)
+    @Column(unique = true, length = 3)
     private String token;
     private Long ownerId;
     private String roomId;

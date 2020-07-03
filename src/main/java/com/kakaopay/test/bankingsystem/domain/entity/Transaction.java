@@ -67,7 +67,7 @@ public class Transaction {
     }
 
     public void toNextStatus(TransactionStatus nextStatus, Long userId) {
-        if(!status.getPossibleNextStatus().contains(nextStatus)) {
+        if (!status.getPossibleNextStatus().contains(nextStatus)) {
             throw new TransactionStatusChangeValidationException("유효하지 않은 트랜잭션 상태 변화입니다.");
         }
         this.status = nextStatus;
