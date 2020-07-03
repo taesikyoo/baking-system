@@ -53,13 +53,14 @@ public class LuckyAccountService {
     }
 
     @Transactional
-    public void withdraw(LuckyAccountWithdrawRequest request) {
+    public Transaction withdraw(LuckyAccountWithdrawRequest request) {
         Account account = accountService.findByToken(request.getToken());
         Long userId = request.getUserId();
+        LocalDateTime requestedAt = LocalDateTime.now();
         if (!account.getRoomId().equals(request.getRoomId())) {
             throw new WithdrawRuleViolationException("일치하지 않는 방 번호입니다.");
         }
-        if (request.getRequestedAt().isAfter(account.getWithdrawExpiredAt())) {
+        if (requestedAt.isAfter(account.getWithdrawExpiredAt())) {
             throw new WithdrawRuleViolationException("뿌리기가 만료되었습니다.");
         }
         if (account.getOwnerId().equals(userId)) {
@@ -77,6 +78,8 @@ public class LuckyAccountService {
                 .orElseThrow(() -> new WithdrawFailureException("더 이상 남은 뿌리기가 없습니다."));
 
         withdrawStandby.toNextStatus(TransactionStatus.WITHDRAW_COMPLETED, userId);
+
+        return withdrawStandby;
     }
 
     private boolean hasTransactionAlready(LuckyAccountWithdrawRequest request, List<Transaction> transactions) {

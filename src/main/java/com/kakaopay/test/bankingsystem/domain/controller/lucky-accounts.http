@@ -8,3 +8,13 @@ Content-Type: application/json
   "amount": "100000",
   "withdrawLimit": "4"
 }
+
+### get
+GET localhost:8080/lucky-accounts
+Content-Type: application/json
+
+{
+  "token": "836",
+  "roomId": "kiworkshop",
+  "userId": "6"
+}
